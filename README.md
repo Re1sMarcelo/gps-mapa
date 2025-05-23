@@ -25,7 +25,7 @@ Este projeto consiste na coleta de dados de localização (Latitude, Longitude, 
 
 ## 🗂️ Como fazer rodar o servidor:
 - Dentro do projeto, no terminal rode:
-npm init -y /n
-npm install express pg dotenv
+"npm init -y"
+"npm install express pg dotenv"
 - E para iniciar insira no terminal "node server.js" e no navegador entre no http://localhost:3000
 
