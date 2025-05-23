@@ -1,6 +1,6 @@
 # 🛰️ Projeto Rastreador GPS com Visualização em Mapa
 
-Este projeto consiste na coleta de dados de localização (Latitude, Longitude, Data e Hora) utilizando um módulo GPS com Arduino. Os dados são armazenados em um banco de dados PostgreSQL e visualizados em uma página web com **OpenStreetMap** e **Leaflet.js**.
+Este projeto consiste na coleta de dados de localização (Latitude, Longitude, Data e Hora) utilizando um módulo GPS com ESP32 integrado com LORA. Os dados são armazenados em um banco de dados PostgreSQL e visualizados em uma página web com **OpenStreetMap** e **Leaflet.js**.
 
 ---
 
