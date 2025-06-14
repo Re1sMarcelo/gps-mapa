@@ -120,6 +120,27 @@ main {
   margin: 5px 0;
 }
 
+.status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.status.online {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.status.offline {
+  background-color: #F44336;
+  color: white;
+}
+
+.status.connecting {
+  background-color: #FFC107;
+  color: black;
+}
 
 
 @media (max-width: 768px) {
