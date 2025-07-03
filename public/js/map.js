@@ -6,6 +6,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(mapa);
 
 // Variáveis para controle do estado
+let rastreamentoAtivo = true;
+let ultimaPosicao = null;
 let marcadorAtual = null;
 let linhaTrajeto = null;
 const pontosTrajeto = [];
@@ -37,10 +39,10 @@ async function buscarDadosRecentes() {
   try {
     const resposta = await fetch('/api/localizacoes');
     if (!resposta.ok) throw new Error('Erro na rede');
-    
+
     const dados = await resposta.json();
     if (!dados || dados.length === 0) throw new Error('Sem dados disponíveis');
-    
+
     return dados[0]; // Retorna o registro mais recente
   } catch (erro) {
     console.error('Erro ao buscar dados:', erro);
@@ -62,25 +64,19 @@ function atualizarStatusDispositivo() {
   }
 }
 
-
 // Atualiza a interface com os novos dados
 function atualizarInterface(localizacao) {
-  // Atualiza o timestamp da última atualização bem-sucedida
-  ultimaAtualizacaoBemSucedida = new Date(); // hora que chegou o dado
-  ultimaDataColetada = new Date(localizacao.data_hora); // hora que o dado foi coletado
-  
-  // Atualiza os valores no painel
+  ultimaAtualizacaoBemSucedida = new Date();
+  ultimaDataColetada = new Date(localizacao.data_hora);
+
   document.getElementById('latitude').textContent = localizacao.latitude.toFixed(6);
   document.getElementById('longitude').textContent = localizacao.longitude.toFixed(6);
   document.getElementById('ultimaAtualizacao').textContent = formatarDataHora(new Date(localizacao.data_hora));
-  
-  // Adiciona o ponto ao histórico
+
   pontosTrajeto.push([localizacao.latitude, localizacao.longitude]);
-  
-  // Remove o marcador anterior
+
   if (marcadorAtual) mapa.removeLayer(marcadorAtual);
-  
-  // Cria novo marcador
+
   marcadorAtual = L.marker([localizacao.latitude, localizacao.longitude])
     .addTo(mapa)
     .bindPopup(`
@@ -88,17 +84,14 @@ function atualizarInterface(localizacao) {
       <b>Longitude:</b> ${localizacao.longitude.toFixed(6)}<br>
       <b>Data/Hora:</b> ${formatarDataHora(new Date(localizacao.data_hora))}
     `);
-  
-  // Centraliza o mapa
+
   mapa.setView([localizacao.latitude, localizacao.longitude]);
-  
-  // Atualiza a linha do trajeto
+
   if (linhaTrajeto) mapa.removeLayer(linhaTrajeto);
   if (pontosTrajeto.length > 1) {
-    linhaTrajeto = L.polyline(pontosTrajeto, {color: 'blue'}).addTo(mapa);
+    linhaTrajeto = L.polyline(pontosTrajeto, { color: 'blue' }).addTo(mapa);
   }
-  
-  // Atualiza o status do dispositivo
+
   atualizarStatusDispositivo();
 }
 
@@ -110,6 +103,7 @@ function tratarErro(erro) {
 
 // Atualiza os dados periodicamente
 async function atualizarDados() {
+  if (!rastreamentoAtivo) return;
   try {
     const dadosRecentes = await buscarDadosRecentes();
     atualizarInterface(dadosRecentes);
@@ -120,14 +114,70 @@ async function atualizarDados() {
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
-  // Configura o relógio
+  document.getElementById("box-voltar").style.display = "none";
+
   atualizarRelogio();
   setInterval(atualizarRelogio, 1000);
-  
-  // Configura a atualização dos dados
+
   atualizarDados();
-  setInterval(atualizarDados, 5000); // Atualiza a cada 5 segundos
-  
-  // Verifica o status periodicamente
-  setInterval(atualizarStatusDispositivo, 1000); // Verifica a cada segundo
+  setInterval(atualizarDados, 5000);
+
+  setInterval(atualizarStatusDispositivo, 1000);
+});
+
+// Botão: Mostrar Trajeto 24h
+document.getElementById("botao-trajeto").addEventListener("click", async () => {
+  try {
+    const resposta = await fetch("/api/trajeto-24h");
+    const dados = await resposta.json();
+
+    const pontos = dados.map(p => [p.latitude, p.longitude]);
+
+    if (marcadorAtual) {
+      mapa.removeLayer(marcadorAtual);
+      marcadorAtual = null;
+    }
+
+    if (linhaTrajeto) {
+      mapa.removeLayer(linhaTrajeto);
+      linhaTrajeto = null;
+    }
+
+    linhaTrajeto = L.polyline(pontos, { color: "blue" }).addTo(mapa);
+    mapa.fitBounds(linhaTrajeto.getBounds());
+
+    rastreamentoAtivo = false;
+
+    // Mostra o botão de voltar, sem esconder o de 24h
+    document.getElementById("box-voltar").style.display = "block";
+
+  } catch (erro) {
+    console.error("Erro ao buscar trajeto 24h:", erro);
+  }
+});
+
+// Botão: Voltar ao Rastreamento em Tempo Real
+document.getElementById("botao-voltar").addEventListener("click", () => {
+  mapa.eachLayer(layer => {
+    if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+      mapa.removeLayer(layer);
+    }
+  });
+
+  if (linhaTrajeto) {
+    mapa.removeLayer(linhaTrajeto);
+    linhaTrajeto = null;
+  }
+
+  if (marcadorAtual) {
+    mapa.removeLayer(marcadorAtual);
+    marcadorAtual = null;
+  }
+
+  rastreamentoAtivo = true;
+
+  // Esconde o botão de voltar
+  document.getElementById("box-voltar").style.display = "none";
+
+  atualizarDados();
 });

@@ -53,3 +53,17 @@ app.get('/api/localizacoes', async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });
+
+app.get('/api/trajeto-24h', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT * FROM localizacoes
+      WHERE data_hora >= NOW() - INTERVAL '24 HOURS'
+      ORDER BY data_hora ASC
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Erro ao buscar trajeto 24h:', err);
+    res.status(500).send('Erro no banco de dados');
+  }
+});

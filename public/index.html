@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +9,13 @@
   <link rel="shortcut icon" href="assets/loc.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <header>
-    <h1>Sistema de Rastreamento GPS</h1>
+    <div class="titulo-logo">
+      <img src="assets/doggps.png" alt="Logo GPS">
+      <h1>Sistema de Rastreamento GPS</h1>
+    </div>
     <div class="datetime">
       <span id="data"></span>
       <span id="hora"></span>
@@ -46,6 +51,13 @@
           <p><strong>Status do Dispositivo:</strong></p>
           <p><span id="statusDispositivo" class="status">-</span></p>
         </div>
+        <div>
+          <button id="botao-trajeto" onclick="mostrarTrajeto24Horas()">Ultimas 24 horas</button>
+        </div>
+        <div id="box-voltar"> <!-- Adicione um id aqui -->
+          <button id="botao-voltar">Voltar ao Rastreamento em Tempo Real</button>
+        </div>
+
       </div>
     </aside>
   </main>
@@ -53,4 +65,5 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="js/map.js"></script>
 </body>
+
 </html>

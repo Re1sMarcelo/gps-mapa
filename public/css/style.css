@@ -5,6 +5,18 @@
   font-family: Arial, sans-serif;
 }
 
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+main {
+  flex: 1;
+  overflow: hidden;
+}
+
 body {
   background: #f9fafb;
   color: #333;
@@ -32,6 +44,17 @@ h1 {
 main {
   display: flex;
   gap: 20px;
+}
+
+.titulo-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* espaçamento entre imagem e título */
+}
+
+.titulo-logo img {
+  height: 68px;  /* altura discreta pra não distorcer o header */
+  width: auto;
 }
 
 .map-section {
@@ -140,6 +163,47 @@ main {
 .status.connecting {
   background-color: #FFC107;
   color: black;
+}
+
+/* Estilo botão Mostrar Trajeto 24h */
+#botao-trajeto {
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 40px;
+  transition: background 0.3s ease;
+}
+
+#botao-trajeto:hover {
+  background-color: #e67600;
+}
+
+
+/* Estilo botão Voltar ao Rastreamento */
+#botao-voltar {
+  background-color: #0284c7; /* azul médio */
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 90px;
+}
+
+#botao-voltar:hover {
+  background-color: #0369a1;
+}
+
+/* Esconde a caixa do botão de voltar inicialmente */
+#box-voltar {
+  display: none;
 }
 
 
